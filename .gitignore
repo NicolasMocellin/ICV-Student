@@ -1,0 +1,5 @@
+__pycache__/
+.venv/
+models/
+images/Train_small_*/
+images/Test_*/
