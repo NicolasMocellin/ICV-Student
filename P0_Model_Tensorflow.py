@@ -151,28 +151,38 @@ def create_test_generator(test_path : str, csv_path : str, class_indices : dict,
 
     return test_generator
 
-
-def create_model_and_evaluate(train_path : str, test_path : str):
-    models_path = r".\models"
-    if not os.path.exists(models_path):
-        os.makedirs(models_path)
+def create_model_and_evaluate(train_path: str, test_path: str):
+    models_path = "./models"
+    os.makedirs(models_path, exist_ok=True)
 
     mean, std = compute_mean_std(train_path)
-    if not os.path.exists(os.path.join(models_path, f"cnn_{train_path.split('\\')[-1]}.h5")):
+
+    model_name = os.path.basename(train_path)        # estrae "Train_small"
+    model_file = os.path.join(models_path, f"cnn_{model_name}.h5")
+    class_file = os.path.join(models_path, f"class_indices_{model_name}.json")
+
+    if not os.path.exists(model_file):
         print("Creating model...")
         model, class_indices = create_model(train_path, mean, std)
-        model.summary()
-        model.save(os.path.join(models_path, f"cnn_{train_path.split('\\')[-1]}.h5"))
-        with open(os.path.join(models_path, f"class_indices_{train_path.split('\\')[-1]}.json"), "w") as f:
-            json.dump(class_indices, f)
-    else:
-        print("Model already exists.")
-        model = load_model(os.path.join(models_path, f"cnn_{train_path.split('\\')[-1]}.h5"))
-        with open(os.path.join(models_path, f"class_indices_{train_path.split('\\')[-1]}.json"), "r") as f:
-            class_indices = json.load(f)
+
         model.summary()
 
-    csv_path = r".\images\Test.csv"  # CSV file with test set labels
+        model.save(model_file)
+
+        with open(class_file, "w") as f:
+            json.dump(class_indices, f)
+
+    else:
+        print("Model already exists.")
+
+        model = load_model(model_file)
+
+        with open(class_file, "r") as f:
+            class_indices = json.load(f)
+
+        model.summary()
+
+    csv_path = r"./images/Test.csv"  # CSV file with test set labels
     test_generator = create_test_generator(test_path, csv_path, class_indices, mean, std)
     test_loss, test_acc = model.evaluate(test_generator)
 
@@ -203,5 +213,4 @@ def create_model_and_evaluate(train_path : str, test_path : str):
             f" Incorrect: {class_labels[true_classes[idx_incorrect]]} (Predicted: {class_labels[predicted_classes[idx_incorrect]]})"])
 
 if __name__ == "__main__":
-    create_model_and_evaluate(r".\images\Train_small", r".\images\Test")
-
+    create_model_and_evaluate(r"./images/Train_small", r"./images/Test")
