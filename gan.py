@@ -177,3 +177,8 @@ for idx in range(num_images):
 print(f"{num_images} images generated in: {save_dir}")
 
 
+# 1- Test GAN to generate images using Train_small\35 as dataset (small dataset)
+
+# 2- Test GAN to generate images using Train\35 as dataset (large dataset)
+
+# WRITE ALL REMARKS AND CONCLUSIONS IN THIS FILE AS COMMENTS
