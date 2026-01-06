@@ -3,3 +3,4 @@ __pycache__/
 models/
 images/Train_small_*/
 images/Test_*/
+images/Generated/
